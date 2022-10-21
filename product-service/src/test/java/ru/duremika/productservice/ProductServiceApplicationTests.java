@@ -1,19 +1,19 @@
 package ru.duremika.productservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.ClassRule;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.utility.DockerImageName;
 import ru.duremika.productservice.dto.ProductRequest;
 import ru.duremika.productservice.model.Product;
 import ru.duremika.productservice.repository.ProductRepository;
@@ -26,8 +26,8 @@ import java.util.List;
 @AutoConfigureMockMvc
 class ProductServiceApplicationTests {
 
-    @ClassRule
-    public static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:4.4.14-rc0-focal");
+    final static MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:4.4.14-rc0-focal"))
+            .withExposedPorts(27017);
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,18 +39,13 @@ class ProductServiceApplicationTests {
     private ProductRepository repository;
 
 
-    @BeforeAll
-    public static void before(){
+    @DynamicPropertySource
+    static void mongoDbProperties(DynamicPropertyRegistry props) {
         mongoDBContainer.start();
-        System.out.println(mongoDBContainer.getReplicaSetUrl());
-        System.setProperty("spring.data.mongodb.uri", mongoDBContainer.getReplicaSetUrl());
+        props.add("spring.data.mongodb.uri", () -> "mongodb://" + mongoDBContainer.getHost() + ":"
+                + mongoDBContainer.getFirstMappedPort() + "/testdb");
     }
 
-
-    @AfterAll
-    public static void after(){
-        mongoDBContainer.stop();
-    }
 
     @Test
     void shouldCreateProduct() throws Exception {
@@ -63,7 +58,7 @@ class ProductServiceApplicationTests {
                         .content(productRequestString))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         final List<Product> products = repository.findAll();
-        Assertions.assertEquals(1, products.size());
+        Assertions.assertFalse( products.isEmpty());
 
     }
 
