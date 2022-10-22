@@ -1,10 +1,10 @@
-package ru.duremika.internetshopmicroservices;
+package ru.duremika.inventoryservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class InternetShopMicroservicesApplicationTests {
+class InventoryServiceApplicationTests {
 
     @Test
     void contextLoads() {

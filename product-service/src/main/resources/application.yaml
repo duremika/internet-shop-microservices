@@ -4,4 +4,4 @@ spring:
       uri: mongodb://localhost:27017/product-service
 
 server:
-  port: 8081
+  port: 8080

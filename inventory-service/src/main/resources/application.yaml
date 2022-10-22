@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/order-service
+    url: jdbc:mysql://localhost:3306/inventory-service
     username: root
     password: mysql
   jpa:
@@ -9,4 +9,4 @@ spring:
       ddl-auto: update
 
 server:
-  port: 8081
+  port: 8082

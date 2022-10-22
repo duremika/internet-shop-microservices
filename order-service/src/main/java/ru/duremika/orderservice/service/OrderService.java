@@ -8,12 +8,14 @@ import ru.duremika.orderservice.model.Order;
 import ru.duremika.orderservice.model.OrderLineItems;
 import ru.duremika.orderservice.repository.OrderRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class OrderService {
     private final OrderRepository repository;
 
