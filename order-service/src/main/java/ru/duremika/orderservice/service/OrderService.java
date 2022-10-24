@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OrderService {
     private final OrderRepository repository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
 
     public void placeOrder(OrderRequest request) {
@@ -49,8 +49,9 @@ public class OrderService {
     }
 
     private Boolean isInStock(List<String> skuCodes) {
+        WebClient webClient = webClientBuilder.build();
         InventoryResponse[] inventoryResponseArray = webClient
-                .get().uri("http://localhost:8082/api/inventory",
+                .get().uri("http://inventory-service/api/inventory",
                         uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                 .retrieve()
                 .bodyToMono(InventoryResponse[].class)

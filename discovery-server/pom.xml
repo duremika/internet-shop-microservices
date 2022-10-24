@@ -7,29 +7,20 @@
         <artifactId>internet-shop-microservices</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>product-service</artifactId>
+    <artifactId>discovery-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>product-service</name>
-    <description>product-service</description>
+    <name>discovery-server</name>
+    <description>discovery-server</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
+
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>mongodb</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
         </dependency>
     </dependencies>
-
 
     <build>
         <plugins>
@@ -39,7 +30,7 @@
                 <configuration>
                     <excludes>
                         <exclude>
-                            <groupId>org.project-lombok</groupId>
+                            <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
