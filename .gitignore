@@ -1,13 +1,7 @@
-HELP.md
-**/target/*
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
 *.iml
-
 /.idea/
 /.mvn/
 /db/
+**/target/
 /mongo-data/
-/order-service/target/
+/mysql_keycloak_data/

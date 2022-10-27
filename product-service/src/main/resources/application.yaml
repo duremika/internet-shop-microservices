@@ -5,6 +5,9 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/product-service
 
+server:
+  port: 0
+
 eureka:
   client:
     serviceUrl:
