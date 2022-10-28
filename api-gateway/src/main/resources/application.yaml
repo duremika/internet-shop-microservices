@@ -13,13 +13,13 @@ spring:
           predicates:
             - Path=/api/order
         - id: discovery-server
-          uri: http ://localhost:8761
+          uri: http://localhost:8761
           predicates:
             - Path=/eurika/web
           filters:
             - SetPath=/
         - id: discovery-server-static
-          uri: http ://localhost:8761
+          uri: http://localhost:8761
           predicates:
             - Path=/eurika/**
 
