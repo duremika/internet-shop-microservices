@@ -22,11 +22,15 @@ spring:
           uri: http://localhost:8761
           predicates:
             - Path=/eurika/**
-
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/internet-shop-microservices-realm
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka:password@localhost:8761/eureka
 
 logging:
   level:
