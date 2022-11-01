@@ -1,6 +1,8 @@
 package ru.duremika.inventoryservice.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.duremika.inventoryservice.dto.InventoryResponse;
@@ -10,12 +12,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class InventoryService {
     private final InventoryRepository repository;
 
     @Transactional(readOnly = true)
+    @SneakyThrows
     public List<InventoryResponse> isInStock(List<String> skuCodes) {
+        log.info("Wait Started");
+        Thread.sleep(10_000);
+        log.info("Wait Ended");
         List<InventoryResponse> foundInventoryResponses = repository.findBySkuCodeIn(skuCodes).stream()
                 .map(inventory -> InventoryResponse.builder()
                         .skuCode(inventory.getSkuCode())
