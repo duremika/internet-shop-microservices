@@ -2,6 +2,8 @@ package ru.duremika.orderservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.duremika.orderservice.dto.InventoryResponse;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final OrderRepository repository;
     private final WebClient.Builder webClientBuilder;
+    private final Tracer tracer;
 
 
     public String placeOrder(OrderRequest request) {
@@ -40,17 +43,24 @@ public class OrderService {
                 .map(OrderLineItems::getSkuCode)
                 .collect(Collectors.toList());
 
-        Boolean result = isInStock(skuCodes);
-        if (result) {
-            repository.save(order);
-            return "Order Placed Successfully";
-        } else {
-            throw new IllegalArgumentException("Product is not in stock, please try again latter.");
+
+        Span inventoryServiceLookup = tracer.nextSpan().name("InventoryServiceLookup");
+        try (Tracer.SpanInScope spanInScope = tracer.withSpan(inventoryServiceLookup.start())) {
+            Boolean result = isInStock(skuCodes);
+            if (result) {
+                repository.save(order);
+                return "Order Placed Successfully";
+            } else {
+                throw new IllegalArgumentException("Product is not in stock, please try again latter.");
+            }
+        } finally {
+            inventoryServiceLookup.end();
         }
     }
 
     private Boolean isInStock(List<String> skuCodes) {
         WebClient webClient = webClientBuilder.build();
+        log.info("Calling inventory service");
         InventoryResponse[] inventoryResponseArray = webClient
                 .get().uri("http://inventory-service/api/inventory",
                         uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())

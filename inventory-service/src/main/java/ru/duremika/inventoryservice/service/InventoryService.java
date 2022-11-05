@@ -20,9 +20,6 @@ public class InventoryService {
     @Transactional(readOnly = true)
     @SneakyThrows
     public List<InventoryResponse> isInStock(List<String> skuCodes) {
-        log.info("Wait Started");
-        Thread.sleep(10_000);
-        log.info("Wait Ended");
         List<InventoryResponse> foundInventoryResponses = repository.findBySkuCodeIn(skuCodes).stream()
                 .map(inventory -> InventoryResponse.builder()
                         .skuCode(inventory.getSkuCode())
