@@ -39,6 +39,5 @@ public class InventoryService {
                         .build())
                 .collect(Collectors.toList()));
         return foundInventoryResponses;
-
     }
 }

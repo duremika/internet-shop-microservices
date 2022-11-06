@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.duremika.orderservice.dto.InventoryResponse;
 import ru.duremika.orderservice.dto.OrderLineDtoItems;
 import ru.duremika.orderservice.dto.OrderRequest;
+import ru.duremika.orderservice.event.OrderPlacedEvent;
 import ru.duremika.orderservice.model.Order;
 import ru.duremika.orderservice.model.OrderLineItems;
 import ru.duremika.orderservice.repository.OrderRepository;
@@ -27,8 +29,10 @@ public class OrderService {
     private final OrderRepository repository;
     private final WebClient.Builder webClientBuilder;
     private final Tracer tracer;
+    private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
 
 
+    @SuppressWarnings("unused")
     public String placeOrder(OrderRequest request) {
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
@@ -49,6 +53,7 @@ public class OrderService {
             Boolean result = isInStock(skuCodes);
             if (result) {
                 repository.save(order);
+                kafkaTemplate.send("notificationTopic", new OrderPlacedEvent(order.getOrderNumber()));
                 return "Order Placed Successfully";
             } else {
                 throw new IllegalArgumentException("Product is not in stock, please try again latter.");
